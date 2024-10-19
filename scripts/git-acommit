@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Name: git-acommit
 # Purpose: clean commit messages with angular convention
 # Deps: git, git-cz
