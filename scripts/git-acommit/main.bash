@@ -26,21 +26,21 @@ when no option is selected commit staged files only.
 while getopts ":t:s:b:B:m:capih" option; do
     case $option in
 	t)
-	    args="$args --type=$OPTARG"
+	    commit_type="$OPTARG"
 	    ;;
 	s)
-	    args="$args --scope=$OPTARG"
+	    commit_scope="$OPTARG"
 	    ;;
 	b)
-	    args="$args --body=$OPTARG"
+	    commit_body="$OPTARG"
 	    ;;
 	B)
-	    args="$args --breaking=$OPTARG"
+	    commit_change="$OPTARG"
 	    ;;
       m)
 	    commit_message="$OPTARG"
 	    ;;
-      s)
+      c)
 	 git add -u
 	 ;;
       a) # commit all changes
@@ -171,7 +171,7 @@ commit_message=${commit_message%, }
 fi
 
 # Commit the changes
-git cz --disable-emoji --non-interactive $args --subject="$commit_message"
+git cz --disable-emoji --non-interactive --type="$commit_type" --scope="$commit_scope" --subject="$commit_message" --body="$commit_body" --breaking="$commit_change"
 
 # For testing
 #echo "Committed with message:"
