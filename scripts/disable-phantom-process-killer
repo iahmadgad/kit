@@ -1,0 +1,20 @@
+#!/bin/sh
+# Name: disable-phantom-process-killer
+# Description: disables phantom process killer on android
+# Deps: adb
+# System: Termux, Termux PRoot-Distro
+# Author: Ahmad Asaad
+
+source ~/.bash_it/lib/colors.bash
+
+if ! [[ $# -eq 1 ]]
+then
+    echo "Usage: disable-phantom-process-killer <ip:port>"
+    exit
+fi
+
+adb connect $1
+adb shell "/system/bin/device_config set_sync_disabled_for_tests persistent"
+adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"
+adb shell "settings put global settings_enable_monitor_phantom_procs false"
+echo -e "${echo_bold_green}Succeeded!${echo_reset_color}"

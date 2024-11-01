@@ -1,0 +1,7 @@
+#!/bin/sh
+# Name: vscode
+# Description: A script to start vscode session
+# Deps: visual studio code
+# Author: Ahmad Asaad
+
+code --no-sandbox &

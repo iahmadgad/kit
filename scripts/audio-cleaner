@@ -1,0 +1,42 @@
+#!/bin/sh
+# Name: audio-cleaner
+# Description: A tool to remove silence parts from audio
+# Deps: python, ffmpeg
+# Author: Ahmad Asaad
+
+# Detect silence and save to log file
+ffmpeg -i $1 -af silencedetect=noise=-40dB:d=2 -f null - 2> silence.log
+
+# Parse the silence log and generate trim points using a Python script
+# generate_trim_points.py
+python3 << EOF
+import re
+
+with open('silence.log', 'r') as f:
+    log = f.read()
+
+# Regex to find silence_start and silence_end
+silence_start = re.findall(r'silence_start: (\d+(\.\d+)?)', log)
+silence_end = re.findall(r'silence_end: (\d+(\.\d+)?)', log)
+
+if len(silence_start) != len(silence_end):
+    raise ValueError("Mismatch in silence start and end times.")
+
+trim_points = []
+for start, end in zip(silence_start, silence_end):
+    trim_points.append(f"between(t,{start[0]},{end[0]})")
+
+# Join all trim points
+trim_points_str = "+".join(trim_points)
+
+with open('trim_points.txt', 'w') as f:
+    f.write(trim_points_str)
+EOF
+
+# Read the trim points from the file
+trim_points=$(cat trim_points.txt)
+
+# Generate the final ffmpeg command
+ffmpeg -i $1 -af "aselect='not(${trim_points})', asetpts=N/SR/TB" $2
+
+rm silence.log trim_points.txt

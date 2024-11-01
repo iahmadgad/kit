@@ -1,0 +1,9 @@
+#!/bin/sh
+# Name: invert-image
+# Purpose: Inverts image colors
+# Deps: magick
+# Author: Ahmad Asaad
+
+extension=${1##*.}
+
+magick $1 -channel RGB -negate inverted-image.$extension

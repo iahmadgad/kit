@@ -1,0 +1,49 @@
+#!/bin/sh
+# Name: run
+# Description: run compiled languages files
+# Author: Ahmad Asaad
+
+name=${1%.*}
+ext=${1##*.}
+
+case $ext in
+    rs)
+	rustc $1
+	./$name
+	rm $name
+	exit
+	;;
+    c)
+	gcc $1 -o $name
+	./$name
+	rm $name
+	exit
+	;;
+    cpp)
+	g++ $1 -o $name
+	./$name
+	rm $name
+	exit
+	;;
+    hs)
+	ghc $1
+	./$name
+	rm $name $name.o $name.hi
+	exit
+	;;
+    java)
+	javac $1
+	java -cp . $name
+	rm $name.class
+	exit
+	;;
+    "")
+	echo "File not specified"
+	exit
+	;;
+    *)
+	echo "Unsupported extension: $ext"
+	exit
+	;;
+esac
+	  

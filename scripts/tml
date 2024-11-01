@@ -1,0 +1,71 @@
+#!/bin/sh
+# Name: tml
+# Description: template loader
+# Author: Ahmad Asaad
+
+Help()
+{
+    echo "\
+Usage: tml [-o] <template-name> [output-name]
+       tml [-l | -h]
+       tml -s template-name
+
+Template loader
+
+-l                  list available templates
+-o                  open template after loading it
+-s template-name    show template with given name
+-h                  show this help message & exit"
+}
+
+open=0
+
+while getopts ":los:h" option; do
+  case $option in
+      h)
+          Help
+          exit
+          ;;
+      l)
+	  ls $TEMPLATES_DIR
+	  exit
+          ;;
+      o)
+	  open=1
+	  ;;
+      s)
+	  cat $TEMPLATES_DIR/$OPTARG
+	  exit
+	  ;;
+       \?) # Invalid option
+          echo "Invalid option -$OPTARG"
+          Help
+          exit
+          ;;
+  esac
+done
+
+shift $((OPTIND -1))
+
+if [ -z "$1" ]
+then
+    echo "Template name not specified"
+    Help
+    exit
+fi
+
+output=$1
+
+if [ -n "$2" ]
+then
+    output=$2
+fi
+
+cp $TEMPLATES_DIR/$1 ./$output
+
+echo -e "\033[32;1mLoaded template successfully!\033[39m"
+
+if [ $open -ne 0 ]
+then
+    emacs $output
+fi

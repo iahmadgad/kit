@@ -1,0 +1,7 @@
+#!/bin/sh
+# Name: video-to-audio
+# Description: convert video files to audio files
+# Deps: ffmpeg
+# Author: Ahmad Asaad
+
+ffmpeg -i $1 -q:a 0 -map a $2

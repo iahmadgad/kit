@@ -1,0 +1,57 @@
+#!/bin/sh
+# Name: httpd
+# Description: http server establisher
+# Deps: ruby
+# Author: Ahmad Asaad
+
+Help()
+{
+    echo "\
+Usage: httpd [-p port] [-o] <path>
+       httpd -h
+
+Ruby http server wrapper	
+
+  -p port    port to host http server, default: 8080
+  -o         open url in browser
+  -h         display this help message & exit"
+}
+
+open=0
+port="8080"
+
+while getopts ":p:oh" option; do
+  case $option in
+      h)
+	  Help
+          exit
+          ;;
+      p)
+          port=$OPTARG
+          ;;
+      o)
+	  open=1
+	  ;;
+      \?) # Invalid option
+          echo "Invalid option -$OPTARG"
+          Help
+          exit
+          ;;
+  esac
+done
+
+shift $((OPTIND -1))
+
+if [ -z "$1" ]
+then
+    echo "path not specified"
+    Help
+    exit
+fi
+
+if [ $open -ne 0 ]
+then
+    termux-open-url http://127.0.0.1:$port/ &
+fi
+
+ruby -run -e httpd $(realpath $1) -p $port

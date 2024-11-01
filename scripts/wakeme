@@ -1,0 +1,13 @@
+#!/bin/sh
+# Name: wakeme
+# Description: tool to send notification when process is done
+# System: Termux, Termux PRoot-Distro
+# Deps: termux-api
+# Author: Ahmad Asaad
+
+cmd=$1
+bash -c "$cmd"
+code=$?
+
+message="command \"$cmd\" ended with exit code $code"
+termux-notification --icon "terminal" -t "Wake Me" -c "$message"

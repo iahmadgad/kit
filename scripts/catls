@@ -1,0 +1,17 @@
+#!/bin/sh
+# Name: catls
+# Description: `cat` every file in directory
+# System: Linux
+# Deps: bash-it
+# Author: Ahmad Asaad
+
+source ~/.bash_it/lib/colors.bash
+
+for file in *
+do
+    if [ -f $file ]
+    then
+        echo -e "${echo_bold_white}file: ${echo_bold_green}${file}${echo_reset_color}"
+        cat $file
+    fi
+done

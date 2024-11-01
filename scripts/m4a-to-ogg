@@ -1,0 +1,13 @@
+#!/bin/sh
+# Name: m4a-to-ogg
+# Description: convert m4a audio files to ogg audio files
+# Deps: ffmpeg
+# Author: Ahmad Asaad
+
+if ! [[ $# -eq 1 ]]
+then
+    echo "Usage: m4a-to-ogg <sound.m4a>"
+    exit
+fi
+
+ffmpeg -i $1 -c:a libopus {$1%.m4a}.ogg
