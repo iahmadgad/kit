@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Name: git-acommit
 # Purpose: clean commit messages with angular convention
 # Deps: git, git-cz
@@ -6,24 +6,32 @@
 
 Help()
 {
-    echo -e "Usage: git acommit [option]
+    echo -e "\
+Usage: git acommit [option]
 git advanced commit
 
 when no option is selected commit staged files only.
 
   -t  <type>       commit type (e.g. feat, docs, fix, etc..)
   -s  <scope>      commit scope (e.g. chore(ci), chore(build, etc..)
-  -b  <body        commit body
+  -b  <body>        commit body
   -B  <change>     breaking change
   -m  <message>    commit message
   -c               commit all changed files (Staged & unstaged)
   -a               commit all files (Staged, unstaged, & untracked)
   -p               commit with problem solving message
   -i               commit with initial commit message
-  -h               display this help message & exit"
+  -h               display this help message & exit
+  -C               use capital letters with generated messages(e.g. Create, Update)"
 }
 
-while getopts ":t:s:b:B:m:capih" option; do
+create_word=create
+update_word=update
+delete_word=delete
+rename_word=rename
+
+
+while getopts ":t:s:b:B:m:capihC" option; do
     case $option in
 	t)
 	    commit_type="$OPTARG"
@@ -75,6 +83,12 @@ while getopts ":t:s:b:B:m:capih" option; do
 	  git add -A
 	  git commit -m "Initial commit"
 	  exit
+	  ;;
+      C)
+	  create_word=Create
+	  update_word=Update
+	  delete_word=Delete
+	  rename_word=Rename
 	  ;;
       \?) # Invalid option
 	 echo "Invalid option"
@@ -132,7 +146,7 @@ done <<< "$changes"
 commit_message=""
 
 if [ ${#create_files[@]} -gt 0 ]; then
-    create_message="Create "
+    create_message="$create_word "
     for i in ${!create_files[@]}; do
 	create_message+="${create_files[$i]}, "
     done
@@ -140,7 +154,7 @@ if [ ${#create_files[@]} -gt 0 ]; then
 fi
 
 if [ ${#update_files[@]} -gt 0 ]; then
-    update_message="Update "
+    update_message="$update_word "
     for i in ${!update_files[@]}; do
         update_message+="${update_files[$i]}, "
     done
@@ -148,7 +162,7 @@ if [ ${#update_files[@]} -gt 0 ]; then
 fi
 
 if [ ${#delete_files[@]} -gt 0 ]; then
-    delete_message="Delete "
+    delete_message="$delete_word "
     for i in ${!delete_files[@]}; do
 	delete_message+="${delete_files[$i]}, "
     done
@@ -156,7 +170,7 @@ if [ ${#delete_files[@]} -gt 0 ]; then
 fi
 
 if [ ${#rename_old_files[@]} -gt 0 ]; then
-  rename_message="Rename "
+  rename_message="$rename_word "
   for i in "${!rename_old_files[@]}"; do
     old_file="${rename_old_files[$i]}"
     new_file="${rename_new_files[$i]}"
@@ -173,6 +187,6 @@ fi
 # Commit the changes
 git cz --disable-emoji --non-interactive --type="$commit_type" --scope="$commit_scope" --subject="$commit_message" --body="$commit_body" --breaking="$commit_change"
 
-# For testing
+# for debugging
 #echo "Committed with message:"
 #echo "$commit_message"
